@@ -33,10 +33,22 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Log(isGrounded); //Debug de teste
         InputDir = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")); //Pega os DIrecionais do "Analogicos" X e Y
 
-        dir = Camera.main.transform.forward * InputDir.y + Camera.main.transform.right * InputDir.x; //Calcula a direção do movimento
+        Vector3 camForward = Camera.main.transform.forward; //Posição "Para frente" da camera
+        Vector3 camRight = Camera.main.transform.right; //Posição "De Lado" da camera
+
+        //ZERA A PORRA DO Z para não termos problemas :3
+        camForward.y = 0f; 
+        camRight.y = 0f;
+
+        camForward.Normalize();
+        camRight.Normalize();
+
+        dir = (camForward * InputDir.y + camRight * InputDir.x).normalized;
 
         if (dir != Vector3.zero) {
             Quaternion targetRotation =  Quaternion.LookRotation(dir); //Angulo desejado
+            targetRotation.z = 0f;
+            targetRotation.x = 0f;
         playerModel.rotation = Quaternion.Slerp(
             playerModel.rotation,
             targetRotation,
