@@ -45,15 +45,16 @@ public class PlayerMovement : MonoBehaviour
 
         dir = (camForward * InputDir.y + camRight * InputDir.x).normalized;
 
-        if (dir != Vector3.zero) {
-            Quaternion targetRotation =  Quaternion.LookRotation(dir); //Angulo desejado
-            targetRotation.z = 0f;
-            targetRotation.x = 0f;
-        playerModel.rotation = Quaternion.Slerp(
-            playerModel.rotation,
-            targetRotation,
-            rotationSpeed * Time.deltaTime
-        ); //Isso aqui tudo rotaciona o modelo na direção que queremos de forma suave (e linda)
+
+        if (dir.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(dir);
+
+            playerModel.rotation = Quaternion.Slerp(
+                playerModel.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
 
         if (Input.GetButtonDown("Jump"))
