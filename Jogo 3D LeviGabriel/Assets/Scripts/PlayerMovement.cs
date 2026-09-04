@@ -8,6 +8,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpStrenght = 20f;
     [Tooltip("Velocidade da rotação do Jogador")]
     [SerializeField] private float rotationSpeed = 5f;
+    [Tooltip("Velocidade da queda do Jogador")]
+    [SerializeField] private float fallGravityMultiplier = 2.5f;
     [Tooltip("Camada referente do Chão")]
     [SerializeField] private LayerMask groundLayer;
     [Tooltip("Referencia do Modelo")]
@@ -45,16 +47,15 @@ public class PlayerMovement : MonoBehaviour
 
         dir = (camForward * InputDir.y + camRight * InputDir.x).normalized;
 
-
-        if (dir.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(dir);
-
-            playerModel.rotation = Quaternion.Slerp(
-                playerModel.rotation,
-                targetRotation,
-                rotationSpeed * Time.deltaTime
-            );
+        if (dir.magnitude > 0.0001f) {
+            Quaternion targetRotation =  Quaternion.LookRotation(dir); //Angulo desejado
+            targetRotation.z = 0f;
+            targetRotation.x = 0f;
+        playerModel.rotation = Quaternion.Slerp(
+            playerModel.rotation,
+            targetRotation,
+            rotationSpeed * Time.deltaTime
+        ); //Isso aqui tudo rotaciona o modelo na direção que queremos de forma suave (e linda)
         }
 
         if (Input.GetButtonDown("Jump"))
@@ -70,6 +71,15 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity.y,
             dir.z * movementSpeed
         );
+
+        // Gravidade extra durante a queda
+        if (rb.linearVelocity.y < 0f)
+        {
+            rb.AddForce(
+                Physics.gravity * (fallGravityMultiplier - 1f),
+                ForceMode.Acceleration
+            );
+        }
 
         if (wantJump)
         {

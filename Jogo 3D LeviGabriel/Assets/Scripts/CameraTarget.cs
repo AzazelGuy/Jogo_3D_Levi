@@ -10,7 +10,7 @@ public class CameraTarget : MonoBehaviour
 
     private void Update()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked; //Tranca Cursor
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
