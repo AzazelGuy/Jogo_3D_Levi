@@ -67,8 +67,9 @@ public class PlayerMovementCharController : MonoBehaviour
         _direction = (camForward * _input.y + camRight * _input.x).normalized;
 
         // Ajuste no Lerp para acelerar e desacelerar corretamente
-        float targetSpeed = 0;
-        if (Input.GetKey(KeyCode.LeftShift))
+        float targetSpeed = speed;
+        if (_characterController.isGrounded){
+        if (Input.GetKey(KeyCode.LeftShift) && _direction.magnitude > 0.0001f)
         {
             if (Stamina > 0f)
             {
@@ -84,7 +85,8 @@ public class PlayerMovementCharController : MonoBehaviour
             targetSpeed = speed;
             Stamina += Time.deltaTime * 9.5f;
         }
-        Stamina = Mathf.Clamp( Stamina, 0f, 100f );
+            Stamina = Mathf.Clamp(Stamina, 0f, 100f);
+        }
         curSpeed = Mathf.Lerp(curSpeed, targetSpeed, 10f * Time.deltaTime);
     }
 
